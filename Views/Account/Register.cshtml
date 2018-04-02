@@ -3,33 +3,62 @@
     ViewData["Title"] = "Register";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="slds-grid slds-grid_align-center" style="margin-top: 40px;">
+    <div class="slds-col slds-size_10-of-12 slds-medium-size_6-of-12 slds-large-size_4-of-12">
+        <div class="c-box">
+            <div class="c-box-title">
+                <h2>@ViewData["Title"]</h2>
+            </div>
+            <div class="c-box-content">
+                <section>
+                    <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                        <h4>Create a new account.</h4>
+                        <div asp-validation-summary="All" class="text-danger"></div>
 
-<div class="row">
-    <div class="col-md-4">
-        <form asp-route-returnUrl="@ViewData["ReturnUrl"]" method="post">
-            <h4>Create a new account.</h4>
-            <hr />
-            <div asp-validation-summary="All" class="text-danger"></div>
-            <div class="form-group">
-                <label asp-for="Email"></label>
-                <input asp-for="Email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" asp-for="Email"></label>
+                            <div class="slds-form-element__control">
+                                <input class="slds-input" asp-for="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" asp-for="Password"></label>
+                            <div class="slds-form-element__control">
+                                <input class="slds-input" asp-for="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" asp-for="ConfirmPassword"></label>
+                            <div class="slds-form-element__control">
+                                <input class="slds-input" asp-for="ConfirmPassword" />
+                                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="c-right" style="margin-top: 15px;">
+                            <div>
+                                <button type="submit" class="btn btn-default">Register</button>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <p>
+                                    <a asp-action="Login">I have an account.</a>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </section>
             </div>
-            <div class="form-group">
-                <label asp-for="Password"></label>
-                <input asp-for="Password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="ConfirmPassword"></label>
-                <input asp-for="ConfirmPassword" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-default">Register</button>
-        </form>
+            <!-- <div class="c-box-footer">
+                Footer text
+            </div> -->
+        </div>
     </div>
 </div>
+
 
 @section Scripts {
     @await Html.PartialAsync("_ValidationScriptsPartial")

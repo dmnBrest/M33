@@ -27,23 +27,28 @@
 <body>
     <div class="slds-grid c-header">
         <div class="slds-col">
-            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">M33</a>
-            <a asp-area="" asp-controller="Home" asp-action="About">About</a>
+            <a asp-area="" asp-controller="Home" asp-action="Index" class="navbar-brand">Salesforce-Developer.RU v2.0</a>
         </div>
         <div class="slds-col c-right">
-            @await Html.PartialAsync("_LoginPartial")
+            <a asp-area="" asp-controller="Home" asp-action="About">About</a>
         </div>
+    </div>
+
+    <div class="c-sub-header c-right">
+        @await Html.PartialAsync("_LoginPartial")
     </div>
 
     <div class="container body-content">
 
-        s@RenderBody()
+        @RenderBody()
 
         <hr />
-        <footer>
+        <footer style="text-align: center;">
             <p>&copy; 2018 - M33</p>
         </footer>
     </div>
+
+    @RenderSection("Scripts", required: false)
 
 </body>
 </html>

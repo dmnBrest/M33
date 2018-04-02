@@ -17,12 +17,20 @@
     border-bottom: 1px solid #e7eaec !important;
 }
 
+.c-sub-header {
+    padding: 0 20px;
+}
+
 .c-login-widjet li {
     display: inline-block;
 }
 
 .slds-form-element {
     margin-top: 10px;
+}
+
+.text-danger {
+    color: #ed5565;
 }
 
 
@@ -39,7 +47,7 @@
     border-width: 2px 0 0;
     color: #1ab394;
     margin-bottom: 0;
-    padding: 15px 15px 7px;
+    padding: 7px 15px;
     min-height: 48px;
     font-size: 24px;
 }
