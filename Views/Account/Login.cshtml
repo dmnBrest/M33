@@ -1,0 +1,116 @@
+﻿@using System.Collections.Generic
+@using System.Linq
+@using Microsoft.AspNetCore.Http
+@using Microsoft.AspNetCore.Http.Authentication
+@model LoginViewModel
+@inject SignInManager<ApplicationUser> SignInManager
+
+@{
+    ViewData["Title"] = "Log in";
+}
+
+
+<div class="slds-grid slds-grid_align-center" style="margin-top: 40px;">
+    <div class="slds-col slds-size_6-of-12">
+        <div class="c-box">
+            <div class="c-box-title">
+                <h2>@ViewData["Title"]</h2>
+            </div>
+            <div class="c-box-content">
+                <section>
+                    <form asp-route-returnurl="@ViewData["ReturnUrl"]" method="post">
+                        <h4>Use a local account to log in.</h4>
+                        <div asp-validation-summary="All" class="text-danger"></div>
+
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" asp-for="Email"></label>
+                            <div class="slds-form-element__control">
+                                <input class="slds-input" asp-for="Email" />
+                                <span asp-validation-for="Email" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="slds-form-element">
+                            <label class="slds-form-element__label" asp-for="Password"></label>
+                            <div class="slds-form-element__control">
+                                <input class="slds-input" asp-for="Password" />
+                                <span asp-validation-for="Password" class="text-danger"></span>
+                            </div>
+                        </div>
+
+                        <div class="slds-form-element">
+                            <div class="slds-form-element__control">
+                                <span class="slds-checkbox">
+                                    <input asp-for="RememberMe" />
+                                    <label class="slds-checkbox__label" for="RememberMe">
+                                        <span class="slds-checkbox_faux"></span>
+                                        <span class="slds-form-element__label">@Html.DisplayNameFor(m => m.RememberMe)</span>
+                                    </label>
+                                </span>
+                            </div>
+                        </div>
+
+                        <div class="c-right">
+                            <div>
+                                <button type="submit" class="btn btn-default">Log in</button>
+                            </div>
+                            <div class="form-group" style="margin-top: 10px;">
+                                <p>
+                                    <a asp-action="ForgotPassword">Forgot your password?</a>
+                                </p>
+                                <p>
+                                    <a asp-action="Register" asp-route-returnurl="@ViewData["ReturnUrl"]">Register as a new user?</a>
+                                </p>
+                            </div>
+                        </div>
+                    </form>
+                </section>
+            </div>
+            <!-- <div class="c-box-footer">
+                Footer text
+            </div> -->
+        </div>
+    </div>
+</div>
+
+
+<div class="row">
+    <div class="col-md-4">
+
+    </div>
+    <!-- <div class="col-md-6 col-md-offset-2">
+        <section>
+            <h4>Use another service to log in.</h4>
+            <hr />
+            @{
+                var loginProviders = (await SignInManager.GetExternalAuthenticationSchemesAsync()).ToList();
+                if (loginProviders.Count == 0)
+                {
+                    <div>
+                        <p>
+                            There are no external authentication services configured. See <a href="https://go.microsoft.com/fwlink/?LinkID=532715">this article</a>
+                            for details on setting up this ASP.NET application to support logging in via external services.
+                        </p>
+                    </div>
+                }
+                else
+                {
+                    <form asp-action="ExternalLogin" asp-route-returnurl="@ViewData["ReturnUrl"]" method="post" class="form-horizontal">
+                        <div>
+                            <p>
+                                @foreach (var provider in loginProviders)
+                                {
+                                    <button type="submit" class="btn btn-default" name="provider" value="@provider.Name" title="Log in using your @provider.DisplayName account">@provider.Name</button>
+                                }
+                            </p>
+                        </div>
+                    </form>
+                }
+            }
+        </section>
+    </div> -->
+</div>
+
+@section Scripts {
+    @await Html.PartialAsync("_ValidationScriptsPartial")
+}

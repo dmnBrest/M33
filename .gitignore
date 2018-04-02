@@ -1,0 +1,7 @@
+.vscode
+bin
+obj
+wwwroot/lib/slds
+appsettings.Development.json
+app.db
+info.txt

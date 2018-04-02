@@ -1,0 +1,61 @@
+﻿body {
+    font-weight: 300;
+    font-size: 14px;
+}
+
+.c-hidden {
+    display: none !important;
+}
+
+.c-right {
+    text-align: right !important;
+}
+
+.c-header {
+    padding: 10px 20px;
+    background-color: #f3f3f4;
+    border-bottom: 1px solid #e7eaec !important;
+}
+
+.c-login-widjet li {
+    display: inline-block;
+}
+
+.slds-form-element {
+    margin-top: 10px;
+}
+
+
+/* http://webapplayers.com/inspinia_admin-v2.7.1/ */
+
+.c-box {
+
+}
+.c-box-title {
+    background-color: #ffffff;
+    border-color: #e7eaec;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 2px 0 0;
+    color: #1ab394;
+    margin-bottom: 0;
+    padding: 15px 15px 7px;
+    min-height: 48px;
+    font-size: 24px;
+}
+.c-box-content {
+    background-color: #ffffff;
+    color: inherit;
+    padding: 15px 20px 20px 20px;
+    border-color: #e7eaec;
+    border-image: none;
+    border-style: solid solid none;
+    border-width: 1px 0;
+}
+.c-box-footer {
+    color: inherit;
+    border-top: 1px solid #e7eaec;
+    font-size: 90%;
+    background: #ffffff;
+    padding: 10px 15px;
+}
