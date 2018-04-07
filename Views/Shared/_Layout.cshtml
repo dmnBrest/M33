@@ -38,15 +38,14 @@
         @await Html.PartialAsync("_LoginPartial")
     </div>
 
-    <div class="container body-content">
-
+    <div class="c-body-content">
         @RenderBody()
-
-        <hr />
-        <footer style="text-align: center;">
-            <p>&copy; 2018 - M33</p>
-        </footer>
     </div>
+
+    <hr />
+    <footer style="text-align: center;">
+        <p>&copy; 2018 - M33</p>
+    </footer>
 
     @RenderSection("Scripts", required: false)
 

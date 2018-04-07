@@ -1,6 +1,10 @@
-﻿body {
+﻿html {
+    background-color: #f3f3f4;
+}
+body {
     font-weight: 300;
     font-size: 14px;
+    background-color: #f3f3f4;
 }
 
 .c-hidden {
@@ -19,6 +23,12 @@
 
 .c-sub-header {
     padding: 0 20px;
+    border-bottom: 1px solid #e7eaec !important;
+    background-color: #fff;
+}
+
+.c-body-content {
+    min-height: 400px;
 }
 
 .c-login-widjet li {
