@@ -32,10 +32,17 @@
             <div>
                 <img id="image" src="/images/m1.jpeg">
             </div>
-            <div class="preview preview-md"></div>
+            <!-- <div class="preview preview-md"></div> -->
 
             <div>
                 <input type="file" name="croppResult" />
+            </div>
+            <div>
+                <button onClick="cropImage()">CropMe</button>
+            </div>
+
+            <div>
+                <button onClick="saveImagesToServer()">SaveMe</button>
             </div>
 
             <!-- <div class="dropzone">
@@ -43,27 +50,27 @@
             </div> -->
 
             <script>
+
+                var blobsToSave = [];
+
                 jQuery(function(){
                     var $image = jQuery('#image');
                     var $input = $("[name='croppResult']");
 
-                    var cropper = initCropper($image[0])
+                    // var cropper = initCropper($image[0])
 
                     $("input:file").change(function() {
                         var oFReader = new FileReader();
-
                         oFReader.readAsDataURL(this.files[0]);
-
                         oFReader.onload = function (oFREvent) {
-
                             // Destroy the old cropper instance
-                            cropper.destroy();
-
+                            if (window.cropperInstance) {
+                                window.cropperInstance.destroy();
+                            }
                             // Replace url
                             $image.attr('src', this.result);
-
                             // Start cropper
-                            cropper = initCropper($image[0])
+                            window.cropperInstance = initCropper($image[0])
                         };
                     });
 
@@ -75,9 +82,30 @@
                     */
                 })
 
+                function cropImage() {
+                    var imageCanvas = window.cropperInstance.getCroppedCanvas({
+                        //width: 160,
+                        //height: 90,
+                        minWidth: 100,
+                        minHeight: 100,
+                        maxWidth: 4096,
+                        maxHeight: 4096,
+                        fillColor: '#fff',
+                        imageSmoothingEnabled: false,
+                        imageSmoothingQuality: 'high'
+                    });
+                    console.log(imageCanvas);
+
+                    imageCanvas.toBlob(function(blob) {
+                        blobsToSave.push(blob);
+                    });
+
+                    $('<img>').attr('src', imageCanvas.toDataURL()).appendTo('body');
+                }
+
                 function initCropper(img) {
                     return cropper = new Cropper(img, {
-                        preview: '.preview',
+                        //preview: '.preview',
                         crop: function(event) {
                             /*
                             console.log(event.detail.x);
@@ -91,6 +119,32 @@
                         }
                     });
                 }
+
+                function saveImagesToServer() {
+
+                    var formData = new FormData();
+                    var i = 1;
+                    for (blob of blobsToSave) {
+                        console.log(blob.type)
+                        formData.append('files', blob, 'file_'+(new Date().getTime())+'_'+i+'.png');
+                        i++;
+                    }
+
+                    $.ajax('/imagelibrary/upload', {
+                        method: "POST",
+                        data: formData,
+                        processData: false,
+                        contentType: false,
+                        success: function () {
+                            console.log('Upload success');
+                        },
+                        error: function () {
+                            console.log('Upload error');
+                        }
+                    });
+
+                }
+
             </script>
 
         </div>
