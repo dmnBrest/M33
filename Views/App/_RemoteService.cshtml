@@ -1,0 +1,46 @@
+<script>
+    window.app.factory('RemoteService', [ '$q', '$rootScope', '$filter', '$timeout', '$http', function ($q, $rootScope, $filter, $timeout, $http) {
+        var f = this;
+
+        f.remoteCall = function(method, url, data) {
+            f.spinner.show();
+            return $http({
+                method: method,
+                url: url,
+                data: data,
+                }).then(function successCallback(response) {
+                    f.spinner.hide();
+                    console.log(response);
+                    if (response.data) {
+                        return response.data;
+                    }
+                    return response;
+                }, function errorCallback(response) {
+                    f.spinner.hide();
+                    console.log('ERROR')
+                    if (response.data && response.data.exception) {
+                        console.log(response.data.exception);
+                        alert(response.data.exception);
+                        throw response.data.exception;
+                    } else {
+                        console.log(response);
+                        alert('Server Exception. Please contact Administrator');
+                        throw response;
+                    }
+                }
+            );
+        };
+
+        f.spinner = {
+            show: function() {
+                jQuery('.c-spinner_container').removeClass('c-hidden');
+            },
+            hide: function() {
+                jQuery('.c-spinner_container').addClass('c-hidden');
+            }
+        };
+
+
+        return f;
+    }])
+</script>

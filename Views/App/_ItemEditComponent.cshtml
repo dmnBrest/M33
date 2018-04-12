@@ -1,0 +1,197 @@
+<style>
+
+    </style>
+
+
+    <script type="text/ng-template" id="itemEditComponentTemplate">
+        <div class="c-app-item-edit">
+            Add Item!
+            <br>
+            Item: {{$ctrl.item}}
+
+            <div ng-if="$ctrl.item">
+
+                <div class="slds-grid slds-grid_align-center" style="margin-top: 40px;">
+                    <div class="slds-col slds-size_6-of-12">
+
+                        <div ng-click="$ctrl.openImage()">
+                            <img id="image-container" src="/images/placeholder.jpg">
+                        </div>
+                        <div>
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="title-input">Title</label>
+                                <div class="slds-form-element__control">
+                                    <input
+                                        ng-model="$ctrl.item.title"
+                                        type="text"
+                                        id="title-input"
+                                        class="slds-input" />
+                                </div>
+                            </div>
+                            <div class="slds-form-element">
+                                <label class="slds-form-element__label" for="description-input">Description</label>
+                                <div class="slds-form-element__control">
+                                    <textarea
+                                        ng-model="$ctrl.item.description"
+                                        id="description-input"
+                                        class="slds-textarea" ></textarea>
+                                </div>
+                            </div>
+                        </div>
+                        <div>
+                            <button ng-click="$ctrl.cropImage()">CropMe</button>
+                            <button ng-click="$ctrl.saveImagesToServer()">SaveMe</button>
+                        </div>
+                        <div class="c-hidden">
+                            <input
+                                id="file-input-el"
+                                type="file"
+                                ng-model="image"
+                                onchange="angular.element(this).scope().initImage(this)" />
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+        </div>
+    </script>
+
+    <script>
+
+        var itemEditComponentTemplate = document.getElementById('itemEditComponentTemplate').innerHTML;
+
+        function itemEditComponentController($scope, $element, $attrs) {
+            var $ctrl = this;
+
+            $ctrl.item = {
+                title: null,
+                description: null,
+                image: null
+            };
+            $ctrl.imageUploaded = false;
+
+            $ctrl.cropImage = function() {
+
+            }
+
+            $ctrl.saveImagesToServer = function() {
+
+            }
+
+            $ctrl.cropperInstance = null;
+            $ctrl.croppedImages = [];
+
+            $scope.initImage = function(el) {
+                var $image = $element.find('#image-container');
+                var oFReader = new FileReader();
+                oFReader.readAsDataURL(el.files[0]);
+                oFReader.onload = function (oFREvent) {
+                    // Destroy the old cropper instance
+                    if ($ctrl.cropperInstance) {
+                        $ctrl.cropperInstance.destroy();
+                    }
+                    // Replace url
+                    $image.attr('src', this.result);
+                    // Start cropper
+                    $ctrl.cropperInstance = initCropper($image[0])
+                    $ctrl.croppedImages = [];
+                    $ctrl.imageUploaded = true;
+                };
+            }
+
+            $ctrl.openImage = function() {
+                if (!$ctrl.imageUploaded) {
+                    jQuery($element).find('#file-input-el').click();
+                }
+            }
+
+            function initCropper(img) {
+                return cropper = new Cropper(img, {
+                    //preview: '.preview',
+                });
+            }
+
+            $ctrl.cropImage = function() {
+                var imageCanvas = $ctrl.cropperInstance.getCroppedCanvas({
+                    width: 1024,
+                    height: 1024,
+                    minWidth: 100,
+                    minHeight: 100,
+                    maxWidth: 4096,
+                    maxHeight: 4096,
+                    fillColor: '#fff',
+                    imageSmoothingEnabled: false,
+                    imageSmoothingQuality: 'high'
+                });
+                imageCanvas.toBlob(function(blob) {
+                    $ctrl.croppedImages.push(blob);
+                    $scope.$apply(function () {
+                        $ctrl.item.image = blob;
+                    });
+                }, 'image/jpeg', 0.95); // default PNG
+                if ($ctrl.cropperInstance) {
+                    $ctrl.cropperInstance.destroy();
+                }
+                $element.find('#image-container').attr('src', imageCanvas.toDataURL());
+            }
+
+            $ctrl.saveImagesToServer = function() {
+
+                var formData = new FormData();
+
+                formData.append('files', $ctrl.item.image, 'file_'+(new Date().getTime())+'.jpg');
+                $ctrl.item.image = null;
+                formData.append('data', JSON.stringify($ctrl.item));
+
+                $.ajax('/app/upload', {
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    console.log('Upload success');
+                },
+                error: function () {
+                    console.log('Upload error');
+                }
+                });
+
+            }
+
+
+            this.$onInit = function() {
+                if ($ctrl.itemId) {
+                    console.log('Get item by ID');
+                } else {
+                    console.log('Create new Item');
+                    $ctrl.item = {
+                        title: null,
+                        description: null,
+                        image: null
+                    };
+                }
+            };
+
+        }
+
+        // init Object Manager component
+        const itemEditComponentDefinition = {
+            template: itemEditComponentTemplate,
+            controller: itemEditComponentController,
+            bindings: {
+                itemId: '<',
+                // type: '@@',
+                // label: '@@',
+                // name: '@@',
+                // disabled: '@@',
+                // placeholder: '@@',
+                // required: '@@',
+            }
+        }
+
+        if (window.app) {
+            window.app.component('itemEdit', itemEditComponentDefinition);
+        }
+
+    </script>

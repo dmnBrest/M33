@@ -1,0 +1,135 @@
+<style>
+    .c-app-menu ul {
+        margin: 0;
+        padding: 0;
+    }
+    .c-app-menu li {
+        display: inline-block;
+    }
+    .c-app-menu a {
+        display: inline-block;
+        padding: 8px 15px;
+    }
+    .c-app-menu a:hover {
+        background-color: #18a689;
+        color: #fff;
+        text-decoration: none;
+    }
+    .c-app-menu a:active,
+    .c-app-menu a:visited,
+    .c-app-menu a:focus {
+        text-decoration: none;
+    }
+</style>
+
+<div ng-app="IHaveItApp" ng-controller="AppController as ctrl" ng-cloak="true">
+
+    <div class="c-app-menu">
+        <ul>
+            <li><a href="#!/">Dashboard</a></li>
+            <li><a href="#!/list">Items</a></li>
+            <li><a href="#!/add">+Add</a></li>
+        </ul>
+    </div>
+    <div>
+
+        <dashboard ng-if="ctrl.mode=='dashboard'"></dashboard>
+        <items-list ng-if="ctrl.mode=='list'"></items-list>
+        <item-edit ng-if="ctrl.mode=='add'"></item-edit>
+
+    </div>
+
+    <!-- SPINNER -->
+    <div class="c-spinner_container c-hidden">
+        <div class="c-spinner c-spinner-1"></div>
+    </div>
+
+
+</div>
+
+<script>
+    window.app = angular.module('IHaveItApp', ['ngRoute'])
+    .controller('AppController', ['$scope', '$rootScope', '$timeout', '$location', 'RemoteService', function($scope, $rootScope, $timeout, $location, RemoteService) {
+        var ctrl = this;
+
+        ctrl.mode = 'dashboard';
+
+        // RemoteService.spinner.show();
+
+        // Router
+        $scope.$watch(function() {
+            return $location.path();
+        }, function(path) {
+            console.log(path);
+            // var re = /\/([a-zA-Z0-9]{15,18})$/g;
+            // if (value) {
+            //     var res = re.exec(value);
+            //     if (res && res.length === 2) {
+            //         ctrl.showPackageDetails(res[1])
+            //     } else {
+            //         ctrl.showPackegesList();
+            //     }
+            // } else {
+            //     ctrl.showPackegesList();
+            // }
+            if (path == '/') {
+                ctrl.showDashboard();
+            } else if (path == '/list') {
+                ctrl.showItems();
+            } else if (path == '/add') {
+                ctrl.showAddNewItem();
+            } else {
+                $location.path('/');
+            }
+        });
+
+        ctrl.showDashboard = function() {
+            ctrl.mode = 'dashboard';
+        }
+
+        ctrl.showItems = function() {
+            ctrl.mode = 'list';
+        }
+
+        ctrl.showAddNewItem = function() {
+            ctrl.mode = 'add';
+        }
+
+        // ctrl.showPackegesList = function() {
+        //     $location.path('/');
+        //     RemoteService.getPackages(ctrl.pagination).then(
+        //         function success(data) {
+        //             ctrl.packages = data.packages;
+        //             ctrl.pagination.total = data.total;
+        //             ctrl.pagination.totalPages = Math.ceil(ctrl.pagination.total / ctrl.pagination.size);
+        //             for (p of ctrl.packages) {
+        //                 p.data = JSON.parse(p.data);
+        //                 console.log(p);
+        //             }
+        //             ctrl.mode = 'list';
+        //         },
+        //         function error() {
+
+        //         }
+        //     );
+        // };
+
+        ctrl.showPackageDetails = function(packageId) {
+            return RemoteService.getPackageById(packageId).then(
+                function success(data) {
+                    ctrl.selectedPackage = data.package;
+                    ctrl.selectedPackage.details = JSON.parse(ctrl.selectedPackage.details);
+                    ctrl.mode = 'view';
+                },
+                function error() {
+                    console.log('ERROR');
+                }
+            );
+        };
+
+        $timeout(function(){
+
+        })
+
+    }]);
+</script>

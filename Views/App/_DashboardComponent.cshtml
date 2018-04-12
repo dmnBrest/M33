@@ -1,0 +1,46 @@
+<style>
+
+</style>
+
+
+<script type="text/ng-template" id="dashboardComponentTemplate">
+    <div class="c-app-dashboard">
+        Dashboard ! {{$ctrl.value}}
+    </div>
+</script>
+
+<script>
+
+    var dashboardComponentTemplate = document.getElementById('dashboardComponentTemplate').innerHTML;
+
+    function dashboardComponentController($scope, $element, $attrs) {
+        var ctrl = this;
+
+        ctrl.value = 'Doom';
+
+
+    }
+
+    // init Object Manager component
+    const dashboardComponentDefinition = {
+        template: dashboardComponentTemplate,
+        controller: dashboardComponentController
+        // require: {
+        //     model: "ngModel"
+        // },
+        // bindings: {
+        //     picklistOptions: '<',
+        //     type: '@@',
+        //     label: '@@',
+        //     name: '@@',
+        //     disabled: '@@',
+        //     placeholder: '@@',
+        //     required: '@@',
+        // }
+    }
+
+    if (window.app) {
+        window.app.component('dashboard', dashboardComponentDefinition);
+    }
+
+</script>

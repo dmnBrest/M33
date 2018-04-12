@@ -1,0 +1,21 @@
+@{
+    ViewData["Title"] = "I Have It";
+}
+
+<style>
+    img {
+        max-width: 100%; /* This rule is very important, please do not ignore this! */
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.3.4/cropper.js"></script>
+<link  href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.3.4/cropper.css" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/angular.js/1.6.5/angular-route.min.js"></script>
+
+
+@await Html.PartialAsync("_App")
+@await Html.PartialAsync("_RemoteService")
+@await Html.PartialAsync("_DashboardComponent")
+@await Html.PartialAsync("_ItemEditComponent")
+@await Html.PartialAsync("_ItemsComponent")

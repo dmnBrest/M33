@@ -1,0 +1,46 @@
+<style>
+
+</style>
+
+
+<script type="text/ng-template" id="itemsComponentTemplate">
+    <div class="c-app-items">
+        Items List ! {{$ctrl.value}}
+    </div>
+</script>
+
+<script>
+
+    var itemsComponentTemplate = document.getElementById('itemsComponentTemplate').innerHTML;
+
+    function itemsComponentController($scope, $element, $attrs) {
+        var ctrl = this;
+
+        ctrl.value = 'DDDDD';
+
+
+    }
+
+    // init Object Manager component
+    const itemsComponentDefinition = {
+        template: itemsComponentTemplate,
+        controller: itemsComponentController
+        // require: {
+        //     model: "ngModel"
+        // },
+        // bindings: {
+        //     picklistOptions: '<',
+        //     type: '@@',
+        //     label: '@@',
+        //     name: '@@',
+        //     disabled: '@@',
+        //     placeholder: '@@',
+        //     required: '@@',
+        // }
+    }
+
+    if (window.app) {
+        window.app.component('itemsList', itemsComponentDefinition);
+    }
+
+</script>

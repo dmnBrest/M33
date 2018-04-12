@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,16 +13,17 @@ using M33.Models;
 namespace M33.Controllers
 {
 
-    public class ImageLibraryController : Controller
+    public class AppController : Controller
     {
 
         IHostingEnvironment _hostingEnvironment;
-        public ImageLibraryController(IHostingEnvironment hostingEnvironment)
+        public AppController(IHostingEnvironment hostingEnvironment)
         {
             _hostingEnvironment = hostingEnvironment;
         }
 
-        //[HttpGet]
+        [HttpGet]
+        [Authorize]
         //[GenerateAntiforgeryTokenCookieForAjax]
         public IActionResult Index()
         {
@@ -29,7 +31,7 @@ namespace M33.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(List<IFormFile> files, [FromBody] object data)
+        public async Task<IActionResult> Upload(List<IFormFile> files, String data)
         {
 
 			Console.WriteLine("XXXXX 0");
