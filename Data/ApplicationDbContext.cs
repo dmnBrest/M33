@@ -87,9 +87,31 @@ namespace M33.Data
             // Customize the ASP.NET Identity model and override the defaults if needed.
             // For example, you can rename the ASP.NET Identity table names and more.
             // Add your customizations after calling base.OnModelCreating(builder);
+
+            builder.Entity<Item>()
+                .HasIndex(b => b.Slug)
+                .IsUnique();
+
+            builder.Entity<ItemTag>()
+                .HasKey(bc => new { bc.ItemId, bc.TagId });
+
+            builder.Entity<ItemTag>()
+                .HasOne(bc => bc.Item)
+                .WithMany(b => b.ItemTags)
+                .HasForeignKey(bc => bc.ItemId);
+
+            builder.Entity<ItemTag>()
+                .HasOne(bc => bc.Tag)
+                .WithMany(c => c.ItemTags)
+                .HasForeignKey(bc => bc.TagId);
+
         }
 
         public DbSet<Post> Post { get; set; }
+        public DbSet<Item> Item { get; set; }
+        public DbSet<Tag> Tag { get; set; }
+        public DbSet<ItemTag> ItemTag { get; set; }
+        public DbSet<Image> Image { get; set; }
 
     }
 }

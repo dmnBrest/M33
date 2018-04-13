@@ -1,0 +1,246 @@
+<style>
+    .c-image-library-overlay {
+        position: fixed;
+        z-index: 9990;
+        background-color: #fff;
+        opacity: 0.4;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        right: 0;
+    }
+    .c-image-library-box {
+        position: fixed;
+        z-index: 9991;
+        background-color: #fff;
+        border: 1px solid #c0c0c0;
+        top: 5%;
+        bottom: 5%;
+        left: 5%;
+        right: 5%;
+        padding: 20px;
+        overflow: hidden;
+    }
+    .c-image-library-header {
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        background-color: #fff;
+        z-index: 9992;
+    }
+    .c-image-library-box-inner {
+        height: 100%;
+        overflow-y: auto;
+        padding-top: 40px;
+    }
+    .slds-tabs_default__item1 {
+        color: #706e6b;
+        position: relative;
+        padding: 0 0.75rem;
+        margin-bottom: -2px;
+        text-transform: uppercase;
+        letter-spacing: 0.0625em;
+    }
+    .slds-tabs_default__item1 span {
+        line-height: 2.5rem;
+        color: #1ab394;
+        font-size: 16px;
+    }
+
+</style>
+
+
+<script type="text/ng-template" id="imageLibraryComponentTemplate">
+    <div class="c-image-library">
+        <div class="c-image-library-overlay"></div>
+        <div class="c-image-library-box">
+            <div class="c-image-library-header">
+                <div class="slds-tabs_default">
+                    <ul class="slds-tabs_default__nav" role="tablist">
+                        <li class="slds-tabs_default__item1" title="Item One" role="presentation"><span>Image Library</span></li>
+                        <li class="slds-tabs_default__item" ng-class="{'slds-is-active': $ctrl.mode=='list'}" title="Item Two" role="presentation">
+                            <a ng-click="$ctrl.mode='list'" class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-2" id="tab-default-2__item">List</a>
+                        </li>
+                        <li class="slds-tabs_default__item" ng-class="{'slds-is-active': $ctrl.mode=='upload'}" title="Item Three" role="presentation">
+                            <a ng-click="$ctrl.openUpload();" class="slds-tabs_default__link" href="javascript:void(0);" role="tab" tabindex="-1" aria-selected="false" aria-controls="tab-default-3" id="tab-default-3__item">Upload</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="c-image-library-box-inner">
+                <div class="c-image-library-content">
+                    <div ng-if="$ctrl.mode=='list'">
+                        LIST
+                    </div>
+                    <div ng-if="$ctrl.mode=='upload'">
+
+                        <div class="slds-grid slds-gutters" >
+                            <div class="slds-col slds-size_6-of-12">
+                                <div ng-click="$ctrl.openImage()">
+                                    <img id="image-container" src="/images/placeholder.jpg">
+                                </div>
+                            </div>
+                            <div class="slds-col slds-size_6-of-12">
+                                <div ng-if="$ctrl.submode == 'crop'">
+                                    <button ng-click="$ctrl.cropImage()">Crop</button>
+                                </div>
+                                <div ng-if="$ctrl.submode == 'save'">
+                                    <div class="slds-form-element">
+                                        <label class="slds-form-element__label" for="title-input">Title</label>
+                                        <div class="slds-form-element__control">
+                                            <input
+                                                ng-model="$ctrl.imageToUpload.title"
+                                                type="text"
+                                                id="title-input"
+                                                class="slds-input" />
+                                        </div>
+                                    </div>
+                                    <button ng-click="$ctrl.saveImagesToServer()">Save</button>
+                                </div>
+                            </div>
+                        </div>
+
+
+
+                        <div class="c-hidden">
+                            <input
+                                id="file-input-el"
+                                type="file"
+                                ng-model="image"
+                                onchange="angular.element(this).scope().initImage(this)" />
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>
+
+<script>
+
+    var imageLibraryComponentTemplate = document.getElementById('imageLibraryComponentTemplate').innerHTML;
+
+    function imageLibraryComponentController($scope, $element, $attrs, RemoteService) {
+        var $ctrl = this;
+
+        $ctrl.mode = 'list';
+        $ctrl.submode = 'open'; // 'crop', 'save'
+        $ctrl.images = null;
+
+        $ctrl.imageToUpload = {
+            title: null,
+            image: null
+        };
+
+        $ctrl.openImage = function() {
+            if ($ctrl.submode == 'open') {
+                jQuery($element).find('#file-input-el').click();
+            }
+        }
+
+        $scope.initImage = function(el) {
+            $scope.$apply(function () {
+                var $image = $element.find('#image-container');
+                var oFReader = new FileReader();
+                var f = el.files[0];
+                console.log(f.name);
+                $ctrl.imageToUpload = {
+                    title: f.name,
+                    image: null
+                };
+                oFReader.readAsDataURL(el.files[0]);
+                oFReader.onload = function (oFREvent) {
+                    var that = this;
+                    $scope.$apply(function () {
+                        // Destroy the old cropper instance
+                        if ($ctrl.cropperInstance) {
+                            $ctrl.cropperInstance.destroy();
+                        }
+                        // Replace url
+                        $image.attr('src', that.result);
+                        // Start cropper
+                        $ctrl.cropperInstance = new Cropper($image[0], {
+                            //preview: '.preview',
+                        });
+                        $ctrl.submode = 'crop';
+                    });
+                };
+            });
+        }
+
+        $ctrl.cropImage = function() {
+            var imageCanvas = $ctrl.cropperInstance.getCroppedCanvas({
+                width: 1024,
+                height: 1024,
+                minWidth: 100,
+                minHeight: 100,
+                maxWidth: 4096,
+                maxHeight: 4096,
+                fillColor: '#fff',
+                imageSmoothingEnabled: false,
+                imageSmoothingQuality: 'high'
+            });
+            imageCanvas.toBlob(function(blob) {
+                $scope.$apply(function () {
+                    $ctrl.imageToUpload.image = blob;
+                    $ctrl.submode = 'save';
+                });
+            }, 'image/jpeg', 0.95); // default PNG
+            if ($ctrl.cropperInstance) {
+                $ctrl.cropperInstance.destroy();
+            }
+            $element.find('#image-container').attr('src', imageCanvas.toDataURL());
+        }
+
+        $ctrl.saveImagesToServer = function() {
+
+            var formData = new FormData();
+
+            formData.append('file', $ctrl.imageToUpload.image, 'file_'+(new Date().getTime())+'.jpg');
+            $ctrl.imageToUpload.image = null;
+            formData.append('data', JSON.stringify($ctrl.imageToUpload));
+
+            $.ajax('/app/upload', {
+                method: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function () {
+                    console.log('Upload success');
+                    $ctrl.mode = 'list';
+                    RemoteService.getUserImages();
+
+                },
+                error: function () {
+                    console.log('Upload error');
+                }
+            });
+
+        }
+
+        $ctrl.openUpload = function() {
+            $ctrl.mode='upload'
+            $ctrl.submode = 'open';
+        }
+
+        this.$onInit = function() {
+            if (!$ctrl.images) {
+                RemoteService.getUserImages();
+            }
+        };
+
+    }
+
+    // init Object Manager component
+    const imageLibraryComponentDefinition = {
+        template: imageLibraryComponentTemplate,
+        controller: imageLibraryComponentController
+    }
+
+    if (window.app) {
+        window.app.component('imageLibrary', imageLibraryComponentDefinition);
+    }
+
+</script>

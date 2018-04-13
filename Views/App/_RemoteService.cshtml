@@ -2,6 +2,10 @@
     window.app.factory('RemoteService', [ '$q', '$rootScope', '$filter', '$timeout', '$http', function ($q, $rootScope, $filter, $timeout, $http) {
         var f = this;
 
+        f.getUserImages = function() {
+            //alert('Get Images');
+        }
+
         f.remoteCall = function(method, url, data) {
             f.spinner.show();
             return $http({
