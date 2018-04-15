@@ -11,7 +11,7 @@ using System;
 namespace M33.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20180412155528_InitialCreate")]
+    [Migration("20180414134627_InitialCreate")]
     partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -21,7 +21,7 @@ namespace M33.Migrations
                 .HasAnnotation("Npgsql:ValueGenerationStrategy", NpgsqlValueGenerationStrategy.SerialColumn)
                 .HasAnnotation("ProductVersion", "2.0.1-rtm-125");
 
-            modelBuilder.Entity("M33.Models.ApplicationUser", b =>
+            modelBuilder.Entity("M33.Models.DB.ApplicationUser", b =>
                 {
                     b.Property<string>("Id")
                         .ValueGeneratedOnAdd();
@@ -79,7 +79,7 @@ namespace M33.Migrations
                     b.ToTable("AspNetUsers");
                 });
 
-            modelBuilder.Entity("M33.Models.Image", b =>
+            modelBuilder.Entity("M33.Models.DB.Image", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -107,7 +107,7 @@ namespace M33.Migrations
                     b.ToTable("Image");
                 });
 
-            modelBuilder.Entity("M33.Models.Item", b =>
+            modelBuilder.Entity("M33.Models.DB.Item", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -143,7 +143,7 @@ namespace M33.Migrations
                     b.ToTable("Item");
                 });
 
-            modelBuilder.Entity("M33.Models.ItemTag", b =>
+            modelBuilder.Entity("M33.Models.DB.ItemTag", b =>
                 {
                     b.Property<int>("ItemId");
 
@@ -156,12 +156,16 @@ namespace M33.Migrations
                     b.ToTable("ItemTag");
                 });
 
-            modelBuilder.Entity("M33.Models.Post", b =>
+            modelBuilder.Entity("M33.Models.DB.Post", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
 
+                    b.Property<string>("ApplicationUserID");
+
                     b.Property<string>("Body");
+
+                    b.Property<string>("BodyHtml");
 
                     b.Property<DateTime>("CreatedAt");
 
@@ -171,14 +175,16 @@ namespace M33.Migrations
 
                     b.Property<string>("LastUpdatedBy");
 
-                    b.Property<string>("Name");
+                    b.Property<string>("Title");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("ApplicationUserID");
 
                     b.ToTable("Post");
                 });
 
-            modelBuilder.Entity("M33.Models.Tag", b =>
+            modelBuilder.Entity("M33.Models.DB.Tag", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd();
@@ -319,36 +325,43 @@ namespace M33.Migrations
                     b.ToTable("AspNetUserTokens");
                 });
 
-            modelBuilder.Entity("M33.Models.Image", b =>
+            modelBuilder.Entity("M33.Models.DB.Image", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserID");
                 });
 
-            modelBuilder.Entity("M33.Models.Item", b =>
+            modelBuilder.Entity("M33.Models.DB.Item", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserID");
                 });
 
-            modelBuilder.Entity("M33.Models.ItemTag", b =>
+            modelBuilder.Entity("M33.Models.DB.ItemTag", b =>
                 {
-                    b.HasOne("M33.Models.Item", "Item")
+                    b.HasOne("M33.Models.DB.Item", "Item")
                         .WithMany("ItemTags")
                         .HasForeignKey("ItemId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("M33.Models.Tag", "Tag")
+                    b.HasOne("M33.Models.DB.Tag", "Tag")
                         .WithMany("ItemTags")
                         .HasForeignKey("TagId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("M33.Models.Tag", b =>
+            modelBuilder.Entity("M33.Models.DB.Post", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser", "ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser", "ApplicationUser")
+                        .WithMany()
+                        .HasForeignKey("ApplicationUserID");
+                });
+
+            modelBuilder.Entity("M33.Models.DB.Tag", b =>
+                {
+                    b.HasOne("M33.Models.DB.ApplicationUser", "ApplicationUser")
                         .WithMany()
                         .HasForeignKey("ApplicationUserID");
                 });
@@ -363,7 +376,7 @@ namespace M33.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserClaim<string>", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -371,7 +384,7 @@ namespace M33.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserLogin<string>", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -384,7 +397,7 @@ namespace M33.Migrations
                         .HasForeignKey("RoleId")
                         .OnDelete(DeleteBehavior.Cascade);
 
-                    b.HasOne("M33.Models.ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
@@ -392,7 +405,7 @@ namespace M33.Migrations
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityUserToken<string>", b =>
                 {
-                    b.HasOne("M33.Models.ApplicationUser")
+                    b.HasOne("M33.Models.DB.ApplicationUser")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);

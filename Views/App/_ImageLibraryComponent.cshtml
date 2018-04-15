@@ -202,7 +202,7 @@
             $ctrl.imageToUpload.image = null;
             formData.append('data', JSON.stringify($ctrl.imageToUpload));
 
-            $.ajax('/app/upload', {
+            $.ajax('/imagelibrary/upload', {
                 method: "POST",
                 data: formData,
                 processData: false,

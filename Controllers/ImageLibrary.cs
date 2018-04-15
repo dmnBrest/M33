@@ -1,13 +1,22 @@
 using System;
 using System.IO;
 using System.Collections.Generic;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using System.Security.Claims;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Hosting;
+using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Numerics;
 using M33.Models;
+using M33.Models.DB;
+using M33.Data;
+using M33.Services;
 
 namespace M33.Controllers
 {
@@ -15,50 +24,56 @@ namespace M33.Controllers
     public class ImageLibraryController : Controller
     {
 
-        IHostingEnvironment _hostingEnvironment;
-        public ImageLibraryController(IHostingEnvironment hostingEnvironment)
+        private IHostingEnvironment _hostingEnvironment;
+        private UserManager<ApplicationUser> _userManager;
+        private ApplicationDbContext _dbContext;
+
+        public ImageLibraryController(IHostingEnvironment hostingEnvironment, UserManager<ApplicationUser> userManager, ApplicationDbContext dbContext)
         {
             _hostingEnvironment = hostingEnvironment;
-        }
-
-        //[HttpGet]
-        //[GenerateAntiforgeryTokenCookieForAjax]
-        public IActionResult Index()
-        {
-            return View();
+            _userManager = userManager;
+            _dbContext = dbContext;
         }
 
         [HttpPost]
-        public async Task<IActionResult> Upload(List<IFormFile> files, [FromBody] object data)
+        [Authorize]
+        public async Task<IActionResult> Upload(IFormFile file, String data)
         {
 
-			Console.WriteLine("XXXXX 0");
-			Console.WriteLine(data);
+            Console.WriteLine("XXXXX 1");
+            Console.WriteLine(data);
+
+            Dictionary<string, string> input = JsonConvert.DeserializeObject<Dictionary<string, string>>(data);
+
+            Console.WriteLine(input);
+            Console.WriteLine(input["title"]);
 
             var uploads = Path.Combine(_hostingEnvironment.WebRootPath, "uploads");
 
-            Console.WriteLine(uploads);
-            Console.WriteLine(files);
+            // TODO Add size and type validation
+            // Console.WriteLine(file.Length);
 
-
-            foreach (var file in files)
+            if (file.Length > 0)
             {
-
-                Console.WriteLine(file.FileName);
-                Console.WriteLine(file.Length);
-
-
-                if (file.Length > 0)
-                {
-                    var filePath = Path.Combine(uploads, file.FileName);
-                    using (var fileStream = new FileStream(filePath, FileMode.Create)) {
-                        await file.CopyToAsync(fileStream);
-                    }
-                    // you should not use file.FileName from the user input and directly combine it with path.combine, as this file name could contain routing to subdirectories ("../../") you always need to recheck with e.g. Path.GetFullPath(generatedPath) if the return value is the same as your wanted upload directory. Also the filename from the request is not unique.
+                var dt = Utils.getNowInUnixTimestamp();
+                var userId = _userManager.GetUserId(User);
+                var filename = userId + '_' + dt.ToString() + ".jpg";
+                var userUploadsDir = Path.Combine(uploads, userId);
+                Directory.CreateDirectory(userUploadsDir);
+                var filePath = Path.Combine(userUploadsDir, filename);
+                using (var fileStream = new FileStream(filePath, FileMode.Create)) {
+                    await file.CopyToAsync(fileStream);
                 }
+
+                var img = new Image {
+                    Name = input["title"],
+                    Filename = filename,
+                    ApplicationUserID = userId
+                };
+                _dbContext.Add(img);
+                _dbContext.SaveChanges();
+
             }
-
-
 
             var output = new Dictionary<string, object>();
             output.Add("key1", "doom1");

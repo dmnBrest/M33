@@ -9,6 +9,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using System.Security.Claims;
 using M33.Models;
+using M33.Models.DB;
 
 namespace M33.Data
 {

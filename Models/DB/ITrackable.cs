@@ -1,6 +1,7 @@
 using System;
 using Microsoft.EntityFrameworkCore;
-namespace M33.Models
+
+namespace M33.Models.DB
 {
     public interface ITrackable
     {

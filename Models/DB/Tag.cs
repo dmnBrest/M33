@@ -4,7 +4,7 @@ using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Collections.Generic;
 
-namespace M33.Models
+namespace M33.Models.DB
 {
 
     public class Tag : ITrackable

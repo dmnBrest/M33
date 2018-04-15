@@ -10,7 +10,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
-using M33.Models;
+using M33.Models.DB;
 using M33.Models.ManageViewModels;
 using M33.Services;
 
